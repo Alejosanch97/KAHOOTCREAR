@@ -15,7 +15,6 @@ export const Home = () => {
 
     const startTimeRef = useRef(null);
 
-    // Emojis para las opciones
     const shapes = {
         A: "🔥",
         B: "💎",
@@ -29,7 +28,7 @@ export const Home = () => {
             const resp = await fetch(API_URL);
             const allData = await resp.json();
             const uniqueIDs = [...new Set(allData.map(item => item.ID_Formulario || item.id_formulario))];
-            setAvailableModules(uniqueIDs.filter(id => id)); // Filtrar IDs vacíos
+            setAvailableModules(uniqueIDs.filter(id => id)); 
             setStep("MODULE_SELECT");
         } catch (err) {
             console.error("Error cargando módulos", err);
@@ -110,25 +109,33 @@ export const Home = () => {
     const finishGame = async () => {
         setStep("LOADING_RESULTS");
         try {
-            // Espera de 3 segundos para que el Excel procese los puntos
-            await new Promise(resolve => setTimeout(resolve, 3000));
+            // Espera de 4.5 segundos para dar tiempo al motor de Google de escribir la última fila
+            await new Promise(resolve => setTimeout(resolve, 4500));
             
-            const resp = await fetch(API_URL);
+            // LLAMADA CLAVE: type=RANKING para leer Respuestas_Enviadas y t=Date.now para evitar caché
+            const resp = await fetch(`${API_URL}?type=RANKING&formId=${selectedModule}&t=${Date.now()}`);
             const allData = await resp.json();
             
-            // Lógica robusta para sumar puntos
-            const stats = allData.reduce((acc, curr) => {
-                // Normalizar nombres de llaves (mayúsculas/minúsculas)
-                const itemUser = curr.Usuario || curr.usuario;
-                const itemForm = curr.ID_Formulario || curr.id_formulario;
-                const itemPts = Number(curr.Puntos_Obtenidos || curr.puntos_obtenidos || 0);
+            console.log("Datos de ranking recibidos:", allData);
 
-                if (itemForm === selectedModule && itemUser) {
-                    acc[itemUser] = (acc[itemUser] || 0) + itemPts;
+            // Procesar los datos sumando los puntos por usuario
+            const stats = allData.reduce((acc, curr) => {
+                // Buscamos las llaves dinámicamente para evitar errores de mayúsculas/minúsculas
+                const keys = Object.keys(curr);
+                const userKey = keys.find(k => k.toLowerCase().trim() === 'usuario');
+                const pointsKey = keys.find(k => k.toLowerCase().trim() === 'puntos_obtenidos');
+
+                const name = curr[userKey];
+                const pts = Number(curr[pointsKey] || 0);
+
+                if (name) {
+                    const cleanName = String(name).trim();
+                    acc[cleanName] = (acc[cleanName] || 0) + pts;
                 }
                 return acc;
             }, {});
 
+            // Convertir objeto en array, ordenar de mayor a menor y tomar los 3 primeros
             const sortedRanking = Object.entries(stats)
                 .map(([name, pts]) => ({ name, pts }))
                 .sort((a, b) => b.pts - a.pts)
@@ -138,6 +145,7 @@ export const Home = () => {
             setStep("END_GAME");
         } catch (err) { 
             console.error("Error al generar podio:", err);
+            // Si hay error, intentamos mostrar lo que tengamos o volvemos al inicio
             setStep("MODULE_SELECT"); 
         }
     };
@@ -163,7 +171,12 @@ export const Home = () => {
                 </div>
             )}
 
-            {step === "LOADING_QUIZ" && <div className="loader-full">Sincronizando con Excel... ⏳</div>}
+            {step === "LOADING_QUIZ" && (
+                <div className="loader-full">
+                    <div className="spinner"></div>
+                    <h1>Sincronizando... ⏳</h1>
+                </div>
+            )}
 
             {step === "SHOW_QUESTION" && (
                 <div className="question-only">
@@ -200,7 +213,7 @@ export const Home = () => {
                 <div className="loader-full">
                     <div className="spinner"></div>
                     <h1>GENERANDO PODIO...</h1>
-                    <p>Sincronizando respuestas de todos los participantes</p>
+                    <p>Calculando resultados finales</p>
                 </div>
             )}
 
@@ -215,6 +228,7 @@ export const Home = () => {
                                 <p>{player.pts} pts</p>
                             </div>
                         ))}
+                        {ranking.length === 0 && <p>No hay datos de participación aún.</p>}
                     </div>
                     <button className="restart-btn" onClick={() => window.location.reload()}>SALIR</button>
                 </div>
