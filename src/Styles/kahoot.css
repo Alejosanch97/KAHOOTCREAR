@@ -417,87 +417,228 @@
     min-width: 80px;
 }
 
-/* --- MEDIA QUERIES (RESPONSIVE) --- */
+/* =========================================
+   PODIO FINAL - ESTILO PREMIUM CORREGIDO
+   ========================================= */
 
-/* CELULARES VERTICAL (iPhone, Android, etc) */
-@media (max-width: 600px) {
-    .game-header h2 {
-        font-size: 1.3rem;
-        padding-left: 45px; /* Deja espacio al timer */
-    }
-
-    .timer-small {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }
-
-    .options-grid {
-        grid-template-columns: 1fr; /* Una sola columna en móvil vertical */
-        grid-template-rows: repeat(4, 1fr);
-        padding: 8px;
-    }
-
-    .opt {
-        font-size: 1.1rem;
-        padding: 10px;
-    }
-
-    .shape {
-        min-width: 40px;
-        height: 40px;
-        font-size: 1.4rem;
-    }
-
-    .question-only h1 {
-        font-size: 1.8rem;
-        padding: 20px;
-    }
-
-    .podium-container {
-        height: 200px;
-        gap: 5px;
-    }
-    
-    .medal { font-size: 1.8rem; }
-    .podium-item strong { font-size: 0.9rem; }
+.ranking-screen {
+    width: 95%;
+    max-width: 900px;
+    animation: fadeIn 0.8s ease-out;
 }
 
-/* MÓVILES O TABLETS EN HORIZONTAL (Lansdcape) */
-@media (max-height: 500px) {
-    .game-header {
-        min-height: 60px;
-        padding: 5px;
-    }
-    
-    .game-header h2 { font-size: 1.1rem; }
-
-    .options-grid {
-        grid-template-columns: 1fr 1fr; /* Volvemos a 2 columnas para aprovechar lo ancho */
-        gap: 5px;
-    }
-
-    .opt { padding: 5px 15px; font-size: 1rem; }
-    .shape { height: 35px; min-width: 35px; font-size: 1.2rem; }
-    
-    .podium-container { height: 150px; }
+.ranking-screen h1 {
+    font-size: 3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    background: linear-gradient(to bottom, #fff, #ccc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* TABLETS VERTICAL (iPad, etc) */
+.podium-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 20px;
+    margin: 60px auto;
+    height: 400px; 
+    perspective: 1000px;
+}
+
+.podium-item {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Cambiado a center para distribuir mejor el espacio */
+    align-items: center;
+    padding: 15px; /* Reducido ligeramente */
+    border-radius: 20px 20px 15px 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 2px 10px rgba(255,255,255,0.2);
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.1);
+    overflow: hidden; /* Seguridad para que nada se salga */
+}
+
+.podium-item:hover {
+    transform: translateY(-10px) scale(1.02);
+}
+
+/* --- JERARQUÍA DE PUESTOS --- */
+
+.pos-1 { 
+    height: 350px; 
+    background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%); 
+    order: 2; 
+    z-index: 3;
+    border: 2px solid #fff5b8;
+}
+
+.pos-2 { 
+    height: 270px; 
+    background: linear-gradient(135deg, #e0e0e0 0%, #757575 100%); 
+    order: 1; 
+    z-index: 2;
+}
+
+.pos-3 { 
+    height: 210px; /* Aumentado un poco para dar aire al texto */
+    background: linear-gradient(135deg, #cd7f32 0%, #7a4312 100%); 
+    order: 3; 
+    z-index: 1;
+}
+
+/* --- ELEMENTOS DENTRO DEL PODIO --- */
+
+.medal { 
+    font-size: 4rem; /* Un poco más pequeña para dar espacio */
+    margin-bottom: 10px; 
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Ajuste específico de medalla para el 3er puesto */
+.pos-3 .medal {
+    font-size: 3rem; /* Medalla más pequeña para el bloque más bajo */
+}
+
+.podium-item strong { 
+    font-size: 1.4rem; /* Tamaño optimizado */
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 90%;
+    display: block;
+}
+
+.podium-item p { 
+    font-size: 1.1rem; 
+    background: rgba(0,0,0,0.4);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 800;
+    margin: 0;
+    color: #fff;
+}
+
+/* --- BOTONES Y ANIMACIONES (IGUALES) --- */
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.update-btn, .restart-btn {
+    padding: 15px 35px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.update-btn { background: #1368ce; color: white; box-shadow: 0 5px 0 #0a4da0; }
+.restart-btn { background: white; color: #46178f; box-shadow: 0 5px 0 #ccc; }
+
+.update-btn:active, .restart-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 transparent; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   RESPONSIVE CORREGIDO (UNIFICADO)
+   ========================================= */
+
+/* --- TABLETS VERTICAL (iPad, etc) --- */
 @media (min-width: 601px) and (max-width: 1024px) {
     .game-header h2 { font-size: 1.6rem; }
     .options-grid { gap: 10px; }
     .opt { font-size: 1.4rem; }
+    .podium-container { height: 350px; }
 }
 
-/* --- ANIMACIONES --- */
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(255,255,255,0.2);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 1s infinite linear;
-    margin: 0 auto 15px;
+/* --- CELULARES VERTICAL (iPhone, Android) --- */
+@media (max-width: 600px) {
+    /* Juego */
+    .game-header { min-height: 80px; padding: 15px; }
+    .game-header h2 { font-size: 1.2rem; padding-left: 50px; }
+    .timer-small { width: 40px; height: 40px; font-size: 1rem; left: 10px; }
+
+    .options-grid {
+        grid-template-columns: 1fr; /* Una columna para que sea fácil tocar */
+        grid-template-rows: repeat(4, 1fr);
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .opt { font-size: 1.1rem; padding: 10px 20px; }
+    .shape { min-width: 40px; height: 40px; font-size: 1.4rem; margin-right: 12px; }
+
+    /* Pantalla de pregunta previa */
+    .question-only h1 { font-size: 1.6rem; padding: 25px; }
+    .timer-badge { width: 70px; height: 70px; font-size: 1.5rem; }
+
+    /* Podio Corregido */
+    .ranking-screen h1 { font-size: 1.6rem; margin-bottom: 20px; }
+    .podium-container { 
+        height: 300px; 
+        gap: 8px; 
+        margin: 20px auto; 
+        width: 98%; 
+    }
+    
+    .pos-1 { height: 240px; }
+    .pos-2 { height: 180px; }
+    .pos-3 { height: 140px; }
+
+    .medal { font-size: 2.2rem; margin-bottom: 5px; }
+    .pos-3 .medal { font-size: 1.8rem; }
+
+    .podium-item strong { 
+        font-size: 0.85rem; 
+        margin-bottom: 5px;
+        text-overflow: clip; /* En móvil muy pequeño, mejor cortar limpio */
+    }
+    
+    .podium-item p { font-size: 0.8rem; padding: 2px 8px; }
+
+    .actions { flex-direction: column; gap: 10px; width: 80%; margin: 30px auto; }
+    .update-btn, .restart-btn { width: 100%; padding: 12px; }
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- MÓVILES EN HORIZONTAL (Landscape) --- */
+@media (max-height: 500px) {
+    .game-header { min-height: 60px; padding: 5px; }
+    .game-header h2 { font-size: 1.1rem; }
+    .timer-small { width: 35px; height: 35px; font-size: 0.9rem; }
+
+    .options-grid {
+        grid-template-columns: 1fr 1fr; /* 2x2 para aprovechar el ancho */
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .opt { padding: 5px 15px; font-size: 0.95rem; }
+    .shape { height: 35px; min-width: 35px; font-size: 1.2rem; margin-right: 8px; }
+    
+    .podium-container { height: 160px; margin: 10px auto; }
+    .medal { font-size: 1.5rem; }
+    .podium-item strong { font-size: 0.8rem; }
+}
