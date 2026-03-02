@@ -55,7 +55,7 @@ export const Home = () => {
     const startQuestionCycle = (index) => {
         setCurrentIdx(index);
         setStep("SHOW_QUESTION");
-        setTimer(10);
+        setTimer(5);
     };
 
     useEffect(() => {
@@ -65,7 +65,7 @@ export const Home = () => {
         } else {
             if (step === "SHOW_QUESTION") {
                 setStep("SHOW_OPTIONS");
-                setTimer(30);
+                setTimer(15);
                 startTimeRef.current = Date.now();
             } else if (step === "SHOW_OPTIONS") {
                 handleAnswer("SIN RESPUESTA");
@@ -106,21 +106,13 @@ export const Home = () => {
         }
     };
 
-    const finishGame = async () => {
-        setStep("LOADING_RESULTS");
+    // FUNCIÓN PARA REFRESCAR EL RANKING SIN SALIR
+    const refreshRanking = async () => {
         try {
-            // Espera de 4.5 segundos para dar tiempo al motor de Google de escribir la última fila
-            await new Promise(resolve => setTimeout(resolve, 4500));
-            
-            // LLAMADA CLAVE: type=RANKING para leer Respuestas_Enviadas y t=Date.now para evitar caché
             const resp = await fetch(`${API_URL}?type=RANKING&formId=${selectedModule}&t=${Date.now()}`);
             const allData = await resp.json();
             
-            console.log("Datos de ranking recibidos:", allData);
-
-            // Procesar los datos sumando los puntos por usuario
             const stats = allData.reduce((acc, curr) => {
-                // Buscamos las llaves dinámicamente para evitar errores de mayúsculas/minúsculas
                 const keys = Object.keys(curr);
                 const userKey = keys.find(k => k.toLowerCase().trim() === 'usuario');
                 const pointsKey = keys.find(k => k.toLowerCase().trim() === 'puntos_obtenidos');
@@ -135,17 +127,25 @@ export const Home = () => {
                 return acc;
             }, {});
 
-            // Convertir objeto en array, ordenar de mayor a menor y tomar los 3 primeros
             const sortedRanking = Object.entries(stats)
                 .map(([name, pts]) => ({ name, pts }))
                 .sort((a, b) => b.pts - a.pts)
                 .slice(0, 3);
 
             setRanking(sortedRanking);
+        } catch (err) {
+            console.error("Error al refrescar ranking", err);
+        }
+    };
+
+    const finishGame = async () => {
+        setStep("LOADING_RESULTS");
+        try {
+            await new Promise(resolve => setTimeout(resolve, 4500));
+            await refreshRanking();
             setStep("END_GAME");
         } catch (err) { 
             console.error("Error al generar podio:", err);
-            // Si hay error, intentamos mostrar lo que tengamos o volvemos al inicio
             setStep("MODULE_SELECT"); 
         }
     };
@@ -230,6 +230,8 @@ export const Home = () => {
                         ))}
                         {ranking.length === 0 && <p>No hay datos de participación aún.</p>}
                     </div>
+                    {/* BOTÓN PARA REFRESCAR EL RANKING AGREGADO */}
+                    <button className="update-btn" onClick={refreshRanking} style={{marginBottom: "10px", backgroundColor: "#f39c12"}}>ACTUALIZAR RANKING</button>
                     <button className="restart-btn" onClick={() => window.location.reload()}>SALIR</button>
                 </div>
             )}
