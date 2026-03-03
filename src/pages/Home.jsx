@@ -72,7 +72,7 @@ export const Home = () => {
     const startQuestionCycle = (index) => {
         setCurrentIdx(index);
         setStep("SHOW_QUESTION");
-        setTimer(15);
+        setTimer(5);
     };
 
     /* ===============================
@@ -86,7 +86,7 @@ export const Home = () => {
         } else {
             if (step === "SHOW_QUESTION") {
                 setStep("SHOW_OPTIONS");
-                setTimer(120);
+                setTimer(30);
                 startTimeRef.current = Date.now();
             } else if (step === "SHOW_OPTIONS") {
                 handleAnswer("SIN_RESPUESTA");

@@ -562,6 +562,139 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+
+/* --- CONFIGURACIÓN DE COLORES VIBRANTES --- */
+:root {
+    --primary-sky: #4facfe;
+    --secondary-sky: #00f2fe;
+    --bubble-white: rgba(255, 255, 255, 0.9);
+    --soft-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    --btn-font: 'Fredoka One', 'Montserrat', sans-serif; /* Tipografía más redondeada sugerida */
+}
+
+/* --- FONDO ANIMADO DE CIELO --- */
+.kahoot-container {
+    background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
+    position: relative;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* --- ELEMENTOS DECORATIVOS (Burbujas de fondo) --- */
+.kahoot-container::before, .kahoot-container::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    z-index: 0;
+    animation: float-bubbles 10s infinite ease-in-out;
+}
+.kahoot-container::before { width: 300px; height: 300px; top: -100px; left: -100px; }
+.kahoot-container::after { width: 200px; height: 200px; bottom: -50px; right: -50px; animation-delay: 2s; }
+
+/* --- CARD DE LOGIN (Estilo Burbuja) --- */
+.step-box {
+    background: var(--bubble-white);
+    padding: 50px;
+    border-radius: 40px; /* Súper redondeado */
+    color: #2d3436;
+    box-shadow: 0 20px 0 rgba(0,0,0,0.05), 0 30px 60px rgba(0,0,0,0.1);
+    border: 8px solid white; /* Efecto marco de juguete */
+    z-index: 1;
+    transform: rotate(-1deg); /* Un toque juguetón */
+    transition: transform 0.3s ease;
+}
+
+.step-box:hover {
+    transform: rotate(0deg) scale(1.02);
+}
+
+.step-box h1 {
+    font-size: 2.5rem;
+    color: #4facfe;
+    text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+/* --- INPUTS ESTILO "SOFT" --- */
+.step-box input {
+    background: #f0f7ff;
+    border: 3px solid #e0eafc;
+    border-radius: 20px;
+    padding: 18px;
+    font-size: 1.2rem;
+    color: #4facfe;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.step-box input:focus {
+    border-color: #4facfe;
+    background: white;
+    box-shadow: 0 0 20px rgba(79, 172, 254, 0.2);
+    outline: none;
+}
+
+/* --- BOTONES "CANDY" (Parecen caramelos) --- */
+.step-box button, .mod-btn {
+    background: #ff7675; /* Rojo pastel/divertido */
+    color: white;
+    border-radius: 20px;
+    padding: 20px;
+    font-size: 1.4rem;
+    font-weight: 900;
+    border: none;
+    box-shadow: 0 8px 0 #d63031; /* Sombra sólida para efecto 3D */
+    cursor: pointer;
+    transition: all 0.1s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.step-box button:hover {
+    background: #ff6b6b;
+    transform: translateY(2px);
+    box-shadow: 0 6px 0 #d63031;
+}
+
+.step-box button:active {
+    transform: translateY(8px);
+    box-shadow: 0 0px 0 #d63031;
+}
+
+/* --- MÓDULOS COMO NUBES --- */
+.mod-btn {
+    background: white;
+    color: #4facfe;
+    box-shadow: 0 8px 0 #e0eafc;
+    margin-bottom: 15px;
+    border: 2px solid #e0eafc;
+}
+
+.mod-btn:hover {
+    background: #f0f7ff;
+    box-shadow: 0 6px 0 #e0eafc;
+}
+
+/* --- ANIMACIÓN DE FONDO --- */
+@keyframes float-bubbles {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-40px) scale(1.1); }
+}
+
+/* --- PANTALLA DE JUEGO ADAPTADA --- */
+.game-header {
+    background: white;
+    border-radius: 0 0 40px 40px;
+    margin: 0 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.opt {
+    border-radius: 30px !important;
+    border: 4px solid white !important;
+    box-shadow: 0 10px 0 rgba(0,0,0,0.1) !important;
+}
 /* =========================================
    RESPONSIVE CORREGIDO (UNIFICADO)
    ========================================= */
