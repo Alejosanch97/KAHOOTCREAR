@@ -134,6 +134,9 @@ export const Home = () => {
     /* ===============================
        RANKING CORREGIDO
     =============================== */
+    /* ===============================
+       RANKING CORREGIDO (Solo Top 3)
+    =============================== */
     const refreshRanking = async () => {
         try {
             const resp = await fetch(
@@ -142,10 +145,14 @@ export const Home = () => {
 
             const data = await resp.json();
 
-            const rankingArray = data.map(item => ({
-                name: item.Usuario,
-                pts: Number(item.Puntos_Totales) || 0
-            }));
+            // Aquí está el cambio: encadenamos todo en una sola variable
+            const rankingArray = data
+                .map(item => ({
+                    name: item.Usuario,
+                    pts: Number(item.Puntos_Totales) || 0
+                }))
+                .sort((a, b) => b.pts - a.pts) // Ordena de mayor a menor
+                .slice(0, 3);                 // Toma solo los 3 primeros
 
             setRanking(rankingArray);
 
