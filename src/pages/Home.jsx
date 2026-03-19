@@ -3,6 +3,9 @@ import "../Styles/kahoot.css";
 
 const API_URL = "https://script.google.com/macros/s/AKfycbxaCshH28XqDAnv3KGCms5toYxEjjsBfjVsdkEPNJYj1SC2ZAeebQPNGbi-FTtoJU39/exec";
 
+// CLAVE EXPLICITA
+const CLAVE_ACCESO = "1997";
+
 export const Home = () => {
 
     const [step, setStep] = useState("LOGIN"); 
@@ -13,6 +16,10 @@ export const Home = () => {
     const [currentIdx, setCurrentIdx] = useState(0);
     const [timer, setTimer] = useState(0);
     const [ranking, setRanking] = useState([]);
+
+    // Estados para la validación de la clave
+    const [pinInput, setPinInput] = useState("");
+    const [errorPin, setErrorPin] = useState(false);
 
     const startTimeRef = useRef(null);
 
@@ -39,6 +46,19 @@ export const Home = () => {
         } catch (err) {
             console.error(err);
             setStep("LOGIN");
+        }
+    };
+
+    /* ===============================
+       VALIDAR PIN ANTES DE INICIAR
+    =============================== */
+    const handleVerifyPin = () => {
+        if (pinInput === CLAVE_ACCESO) {
+            setErrorPin(false);
+            startQuiz(selectedModule);
+        } else {
+            setErrorPin(true);
+            setPinInput("");
         }
     };
 
@@ -132,9 +152,6 @@ export const Home = () => {
     };
 
     /* ===============================
-       RANKING CORREGIDO
-    =============================== */
-    /* ===============================
        RANKING CORREGIDO (Solo Top 3)
     =============================== */
     const refreshRanking = async () => {
@@ -145,14 +162,13 @@ export const Home = () => {
 
             const data = await resp.json();
 
-            // Aquí está el cambio: encadenamos todo en una sola variable
             const rankingArray = data
                 .map(item => ({
                     name: item.Usuario,
                     pts: Number(item.Puntos_Totales) || 0
                 }))
-                .sort((a, b) => b.pts - a.pts) // Ordena de mayor a menor
-                .slice(0, 3);                 // Toma solo los 3 primeros
+                .sort((a, b) => b.pts - a.pts) 
+                .slice(0, 3);                 
 
             setRanking(rankingArray);
 
@@ -169,10 +185,6 @@ export const Home = () => {
             setStep("END_GAME");
         }, 3000);
     };
-
-    /* ===============================
-       RETURN ORIGINAL (NO MODIFICADO)
-    =============================== */
 
     return (
         <div className="kahoot-container">
@@ -198,11 +210,35 @@ export const Home = () => {
                     <p>Selecciona un formulario:</p>
                     <div className="module-list">
                         {availableModules.map(id => (
-                            <button key={id} className="mod-btn" onClick={() => startQuiz(id)}>
+                            <button key={id} className="mod-btn" onClick={() => {
+                                setSelectedModule(id);
+                                setStep("WAITING_KEY");
+                            }}>
                                 📝 {id}
                             </button>
                         ))}
                     </div>
+                </div>
+            )}
+
+            {step === "WAITING_KEY" && (
+                <div className="step-box">
+                    <h2>PIN DE ACCESO 🔒</h2>
+                    <p>Módulo: {selectedModule}</p>
+                    <input
+                        type="password"
+                        placeholder="Ingresa el código..."
+                        value={pinInput}
+                        onChange={(e) => setPinInput(e.target.value)}
+                        style={{ textAlign: "center", fontSize: "20px" }}
+                    />
+                    {errorPin && <p style={{ color: "red", fontWeight: "bold" }}>Pin incorrecto, intenta de nuevo.</p>}
+                    <button onClick={handleVerifyPin}>
+                        VALIDAR E INICIAR
+                    </button>
+                    <button className="restart-btn" onClick={() => setStep("MODULE_SELECT")}>
+                        VOLVER
+                    </button>
                 </div>
             )}
 
